@@ -194,11 +194,11 @@ func (t *tufCommander) tufWitness(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	gun := data.NewGUN(args[0])
+	gun := data.GUN(args[0])
 	var roles []data.RoleName
 	roleNames := args[1:]
 	for _, role := range roleNames {
-		roles = append(roles, data.NewRoleName(role))
+		roles = append(roles, data.RoleName(role))
 	}
 
 	// no online operations are performed by add so the transport argument
@@ -260,7 +260,7 @@ func (t *tufCommander) tufAddByHash(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	gun := data.NewGUN(args[0])
+	gun := data.GUN(args[0])
 	targetName := args[1]
 	targetSize := args[2]
 
@@ -319,7 +319,7 @@ func (t *tufCommander) tufAdd(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	gun := data.NewGUN(args[0])
+	gun := data.GUN(args[0])
 	targetName := args[1]
 	targetPath := args[2]
 
@@ -361,7 +361,7 @@ func (t *tufCommander) tufDeleteGUN(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	gun := data.NewGUN(args[0])
+	gun := data.GUN(args[0])
 
 	trustPin, err := getTrustPinning(config)
 	if err != nil {
@@ -405,7 +405,7 @@ func (t *tufCommander) tufInit(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	gun := data.NewGUN(args[0])
+	gun := data.GUN(args[0])
 
 	rt, err := getTransport(config, gun, readWrite)
 	if err != nil {
@@ -503,7 +503,7 @@ func (t *tufCommander) tufList(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	gun := data.NewGUN(args[0])
+	gun := data.GUN(args[0])
 
 	rt, err := getTransport(config, gun, readOnly)
 	if err != nil {
@@ -522,7 +522,7 @@ func (t *tufCommander) tufList(cmd *cobra.Command, args []string) error {
 	}
 
 	// Retrieve the remote list of signed targets, prioritizing the passed-in list over targets
-	targetList, err := nRepo.ListTargets(t.roles...)
+	targetList, err := nRepo.ListTargets(data.NewRoleList(t.roles)...)
 	if err != nil {
 		return err
 	}
@@ -541,7 +541,7 @@ func (t *tufCommander) tufLookup(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	gun := data.NewGUN(args[0])
+	gun := data.GUN(args[0])
 	targetName := args[1]
 
 	rt, err := getTransport(config, gun, readOnly)
@@ -579,7 +579,7 @@ func (t *tufCommander) tufStatus(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	gun := data.NewGUN(args[0])
+	gun := data.GUN(args[0])
 
 	trustPin, err := getTrustPinning(config)
 	if err != nil {
@@ -636,7 +636,7 @@ func (t *tufCommander) tufReset(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	gun := data.NewGUN(args[0])
+	gun := data.GUN(args[0])
 
 	trustPin, err := getTrustPinning(config)
 	if err != nil {
@@ -676,7 +676,7 @@ func (t *tufCommander) tufPublish(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	gun := data.NewGUN(args[0])
+	gun := data.GUN(args[0])
 
 	cmd.Println("Pushing changes to", gun)
 
@@ -708,7 +708,7 @@ func (t *tufCommander) tufRemove(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	gun := data.NewGUN(args[0])
+	gun := data.GUN(args[0])
 	targetName := args[1]
 
 	trustPin, err := getTrustPinning(config)
@@ -751,7 +751,7 @@ func (t *tufCommander) tufVerify(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	gun := data.NewGUN(args[0])
+	gun := data.GUN(args[0])
 	targetName := args[1]
 
 	rt, err := getTransport(config, gun, readOnly)
@@ -775,7 +775,7 @@ func (t *tufCommander) tufVerify(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("error retrieving target by name:%s, error:%v", targetName, err)
 	}
 
-	if err := data.CheckHashes(payload, data.NewRoleName(targetName), target.Hashes); err != nil {
+	if err := data.CheckHashes(payload, data.RoleName(targetName), target.Hashes); err != nil {
 		return fmt.Errorf("data not present in the trusted collection, %v", err)
 	}
 
